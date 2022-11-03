@@ -1,9 +1,8 @@
 # Interaction fatigue <-> physiological data
 # 1. Read data
-path = "C:/Users/jjung/iCloudDrive/ETH/MSc 3rd semester/Semester project/Output/"
-path.macOS = "/Users/janoschjungo/Library/Mobile Documents/com~apple~CloudDocs/ETH/MSc 3rd semester/Semester project/Output/"
+path = './Output/'
 
-data.mean = read.csv(paste(path.macOS, "combined_data_mean.csv", sep=""), header=TRUE, sep=",")
+data.mean = read.csv(paste(path, "combined_data_mean.csv", sep=""), header=TRUE, sep=",")
 str(data.mean)
 n = nrow(data.mean)
 p = 12
@@ -74,6 +73,36 @@ barplot(table(data.mean$subjectID),
 
 sort(table(data.mean$subjectID))[23:27] # top 4 “contributors“
 (sum(sort(table(data.mean$subjectID))[23:27]) / n) * 100 # 4/27 give data for 65%
+# VAS
+sub = table(data.mean$VAS, data.mean$subjectID)  # with fatigue labels
+barplot(sub,
+        main="days with filled out questionnaires (fatigue: VAS)",
+        xlab="subject", 
+        ylab="days",
+        col=c("blue", "red"))
+legend("topleft", legend=rownames(sub), fill=c("blue", "red"))
+apply(sub, MARGIN=1, FUN=sum) # ratio vigilant/fatigued
+apply(sub, MARGIN=1, FUN=sum) / sum(sub) # percentage vigilant/fatigued
+# phF
+sub = table(data.mean$phF, data.mean$subjectID)  # with fatigue labels
+barplot(sub,
+        main="days with filled out questionnaires (fatigue: phF)",
+        xlab="subject", 
+        ylab="days",
+        col=c("blue", "red"))
+legend("topleft", legend=rownames(sub), fill=c("blue", "red"))
+apply(sub, MARGIN=1, FUN=sum) # ratio vigilant/fatigued
+apply(sub, MARGIN=1, FUN=sum) / sum(sub) # percentage vigilant/fatigued
+# MF
+sub = table(data.mean$MF, data.mean$subjectID)  # with fatigue labels
+barplot(sub,
+        main="days with filled out questionnaires (fatigue: MF)",
+        xlab="subject", 
+        ylab="days",
+        col=c("blue", "red"))
+legend("topleft", legend=rownames(sub), fill=c("blue", "red"))
+apply(sub, MARGIN=1, FUN=sum) # ratio vigilant/fatigued
+apply(sub, MARGIN=1, FUN=sum) / sum(sub) # percentage vigilant/fatigued
 
 
 # boxplots

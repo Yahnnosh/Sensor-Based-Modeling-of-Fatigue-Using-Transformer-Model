@@ -8,3 +8,6 @@ graph TD;
     Output --> preproc_data;
     Output --> data_analyzation;   
 ```
+
+# Notes
+- normalize subject data (Z-score) to combat intra-subject variability? (~ calibration)
