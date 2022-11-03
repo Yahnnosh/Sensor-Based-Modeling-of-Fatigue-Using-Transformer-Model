@@ -58,6 +58,34 @@ ggplot(data=melted2, aes(x=variable, y=value)) +
   facet_wrap(~variable, scales="free")
 
 
+# Shapiro-Wilk test
+p.values = matrix(nrow=27, ncol=p)
+sample.size = matrix(nrow=27, ncol=p)
+for (subj in 1:27) {
+  for (var in 1:p) {
+    variable = names(data.mean)[var + 3]
+    data.subj = data.mean[, variable][data.mean$subjectID == subj]
+    
+    sample.size[subj, var] = length(na.omit(data.subj))
+  }
+}
+sample.size
+for (subj in 1:27) {
+  for (var in 1:p) {
+    variable = names(data.mean)[var + 3]
+    data.subj = data.mean[, variable][data.mean$subjectID == subj]
+    
+    p.values[subj, var] = ifelse(sample.size[subj, var] < 3, NA, shapiro.test(data.subj)$p.value)
+  }
+}
+p.values
+alpha = 0.05
+result = p.values < alpha # H0: data is normally distributed -> if p < alpha: reject H0
+colnames(result) = names(data.mean)[4:(3+p)]
+plot(result, col=c("green", "red"), las=2, xlab="Variable", ylab="Subject", 
+     main="Shapiro-Wilk test (red: reject H0 (normality assumption) under a = 0.05)")
+
+
 # questionnaires per subject
 y = numeric(27)
 for (i in 1:27) {
@@ -235,7 +263,7 @@ plot(covariance.matrix, las=2, cex.axis=0.7, breaks=6, digits=4, text.cell=list(
 
 
 # correlation
-correlation.matrix = cor(na.omit(subset(dat, select=variables)))
+correlation.matrix = cor(na.omit(subset(dat, select=variables)), method="spearman")
 for (i in 1:ncol(correlation.matrix)) { # set upper triangle to NaN
   for (j in i:ncol(correlation.matrix)) {
     correlation.matrix[i, j] = NA
