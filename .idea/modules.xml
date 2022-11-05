@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../../../Desktop/.idea/Desktop.iml" filepath="$PROJECT_DIR$/../../../../Desktop/.idea/Desktop.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/fatigue_modeling.iml" filepath="$PROJECT_DIR$/.idea/fatigue_modeling.iml" />
     </modules>
   </component>
