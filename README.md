@@ -18,6 +18,9 @@ graph TD;
 - (Feature vector: incl. whether data artificial or not?)
 - Model: majority voting (+ accuracy, recall etc.)
 - Spectrogram: check if full imputation resolves small image sizes
+- Spectrogram: black/white bars? (e.g. 0, HR)
+- Segmentation: forward window but end may be missed?
+- Variable: ActivityClass categorical (-> no spectrogram nor linear interpolation) + lots of missing data -> discard?
 
 # Notes
 - normalize subject data (Z-score) to combat intra-subject variability? (~ calibration)
