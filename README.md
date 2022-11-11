@@ -3,10 +3,12 @@
 # Data flowchart
 ```mermaid
 graph TD;
-    Data --> data_loader; 
-    data_loader --> Output;
-    Output --> preproc_data;
-    Output --> data_analyzation;   
+    Data --> id1([data_loader]); 
+    id1([data_loader]) --> Output;
+    Output --> id2([preproc_data]);
+    Output --> id3([data_analyzation]);
+    id2([preproc_data]) --> Models;
+    Models --> id4([majority_voting]);   
 ```
 
 # Notes
