@@ -8,7 +8,8 @@ graph TD;
     Output --> id2([preproc_data]);
     Output --> id3([data_analyzation]);
     id2([preproc_data]) --> Models;
-    Models --> id4([majority_voting]);   
+    Models --> id4([majority_voting])
+    Models --> id5([CNN]);   
 ```
 
 # Notes
