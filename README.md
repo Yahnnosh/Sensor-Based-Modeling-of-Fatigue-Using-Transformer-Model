@@ -2,14 +2,50 @@
 
 # Data flowchart
 ```mermaid
-graph TD;
-    Data --> id1([data_loader]); 
-    id1([data_loader]) --> Output;
-    Output --> id2([preproc_data]);
-    Output --> id3([data_analyzation]);
-    id2([preproc_data]) --> Models;
-    Models --> id4([majority_voting])
-    Models --> id5([CNN]);   
+flowchart TD;
+    Data --> id1([data_loader])
+    id1([data_loader]) --> Output
+    
+    Output --> id3([data_analyzation])
+    Output --> id2([preproc_data])
+    Output --> id6([preproc_data_stat])
+    Output ---> id4([majority_voting])
+    Output ---> id9([random_guess])
+    
+    id6([preproc_data_stat]) --> id8([random_forest])
+    id2([preproc_data]) --> id5([CNN])
+    id5([CNN]) <.-> temp
+```
+```mermaid
+flowchart LR;
+    subgraph data
+        Data
+        id1([data_loader])
+        Output
+        id3([data_analyzation])
+        id2([preproc_data])
+        id6([preproc_data_stat])
+    end
+    subgraph models
+        id4([majority_voting])
+        id9([random_guess])
+        id5([CNN])
+        id8([random_forest])
+    end
+    
+    Data --> id1([data_loader]) 
+    id1([data_loader]) --> Output
+    
+    Output --> id3([data_analyzation])
+    Output ---> id4([majority_voting])
+    Output ---> id9([random_guess])
+    Output --> id2([preproc_data])
+    Output --> id6([preproc_data_stat])
+    
+    id6([preproc_data_stat]) --> id8([random_forest])
+    id2([preproc_data]) --> id5([CNN])
+    
+    id5([CNN]) <.-> temp
 ```
 
 # Currently:
