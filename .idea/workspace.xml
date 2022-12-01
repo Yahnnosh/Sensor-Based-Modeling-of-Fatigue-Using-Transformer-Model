@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="914d00a5-6f3d-4f22-90a0-25d214b77e95" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/fatigue_modeling.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/fatigue_modeling.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CNN.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CNN.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/majority_voting.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/majority_voting.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/preproc_data.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/preproc_data.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/random_forest.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/random_forest_with_preproc.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsaug_test.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xgboost.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xgboost_test.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/xgboost_test.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +19,7 @@
       <list>
         <option value="RMarkdown.notebook" />
         <option value="Jupyter Notebook" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -49,6 +45,8 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/janoschjungo/Documents/ETH/MSc 3rd semester/Semester project&quot;
   }
