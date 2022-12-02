@@ -37,22 +37,57 @@ def evaluator(y_pred, y_true, verbose=False):
             'precision': precision}
 
 
-# TODO: check for multiclass predictions (axis=?)
-def daily_majority_vote(y_pred_segments, days):
-    """Predicts majority class from segement predictions"""
-    y_pred_days = {day: [] for day in days}
+def aggregate_by_day(values, indices, metadata):
+    """
+    Aggregates values along individual days
+    :param values: e.g. labels or label predictions
+    :param indices: indices of values w.r.t dataset
+    :param metadata: metadata for FULL(!) dataset
+    :return:
+    """
+    # day information for each segment
+    metadata_selection = np.array(metadata)[indices]
+    days_selection = [(meta['date'], meta['subjectID']) for meta in metadata_selection] # note that same date can be used by different subjects
 
-    # aggregate
-    for day, y_pred_segment in zip(days, y_pred_segments):
-        y_pred_days[day].append(y_pred_segment)
+    # assign values to corresponding day
+    values_daily = {key: [] for key in set(days_selection)}
+    for key, pred in zip(days_selection, values):
+        values_daily[key].append(pred)
+
+    return values_daily
+
+
+# TODO: check for multiclass predictions
+def daily_majority_vote(y_pred_segments, indices, metadata):
+    """Predicts majority class from segement predictions"""
+    # aggregate by day
+    y_pred_daily = aggregate_by_day(y_pred_segments, indices, metadata)
 
     # majority vote
-    for day in days:
-        predictions = y_pred_days[day]
-        counts_per_prediction = np.bincount(predictions)
-        y_pred_days[day] = np.argmax(counts_per_prediction)
+    for day, day_preds in y_pred_daily.items():
+        if len(day_preds) == 1:
+            y_pred_daily[day] = day_preds[0]
+        else:
+            county_by_label = np.bincount(day_preds)
+            y_pred_daily[day] = np.argmax(county_by_label)
 
-    return y_pred_days
+    return y_pred_daily
+
+
+def agreements(y_pred_segments, indices, metadata):
+    """Calculates percentage of agreements between predictions of same-day segments"""
+    # aggregate by day
+    y_pred_daily = aggregate_by_day(y_pred_segments, indices, metadata)
+
+    # agreements by day
+    agreements = {key: 0 for key in y_pred_daily.keys()}
+    for day, day_preds in y_pred_daily.items():
+        if len(day_preds) == 1:
+            agreements[day] = 1  # only one value -> agrees by default
+        else:
+            agreements[day] = int(np.sum(day_preds) == len(day_preds) or np.sum(day_preds) == 0)
+
+    return np.mean(list(agreements.values()))
 
 
 # TODO: check if assumption correct, that we do not need X data to create the splits
@@ -285,7 +320,8 @@ def stratified_train_test(path, model, test_size, images, verbose=True, variable
 
     # train/test split
     data_indices = np.arange(N)
-    train_indices, test_indices, y_train, y_test = train_test_split(X=data_indices, y=y, test_size=test_size, random_state=SEED)
+    train_indices, test_indices, y_train, y_test = train_test_split(data_indices, y, test_size=test_size, shuffle=True,
+                                                                    random_state=SEED, stratify=y)
 
     print(f'Starting stratified train/test for {["physical fatigue", "mental fatigue"][variable]}')
 
@@ -301,7 +337,7 @@ def stratified_train_test(path, model, test_size, images, verbose=True, variable
     # print (if verbose==True)
     if verbose:
         print('Performance model:')
-        for score, metric in scores.items():
+        for metric, score in scores.items():
             print(f' {metric}: {round(score, 3)} +- {round(score, 3)} \n')
 
     return scores
