@@ -25,6 +25,10 @@ flowchart TD;
 ```
 
 # Currently:
+- latexify table
+- model performance significant
+- CNN improvement: overlap incr., augm. incr., daily majority vote
+
 ### MobileNet
 - MobileNet spectrogram? (-> not trained specifically on spectrograms?)
 - MobileNetV2 doesn't expect 30 input channels (-> multiple input nets)
