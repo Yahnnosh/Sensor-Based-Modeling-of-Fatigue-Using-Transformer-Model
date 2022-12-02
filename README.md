@@ -16,6 +16,12 @@ flowchart TD;
     id6([preproc_data_stat]) --> id10([XGBoost])
     id2([preproc_data]) --> id5([CNN])
     id5([CNN]) <.-> temp
+    
+    id4([majority_voting]) --> id11([evaluator])
+    id5([CNN]) --> id11([evaluator])
+    id8([random_forest]) --> id11([evaluator])
+    id10([XGBoost]) --> id11([evaluator])
+    id9([random_guess]) --> id11([evaluator])
 ```
 
 # Currently:
