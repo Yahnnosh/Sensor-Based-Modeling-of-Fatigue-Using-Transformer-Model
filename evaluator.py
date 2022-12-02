@@ -7,6 +7,9 @@ from tqdm import tqdm
 import os
 
 
+SEED = 2022
+
+
 def evaluator(y_pred, y_true, verbose=False):
     """Returns evaluation metric scores"""
     accuracy = accuracy_score(y_pred=y_pred, y_true=y_true)
@@ -83,7 +86,7 @@ def stratified_group_k_fold(path, groups, model, images, folds=5, verbose=True, 
             y[i] = np.load(path + f'/labels_stat{i}.npy', allow_pickle=True)[variable]  # TODO: multiclass
 
     # CV
-    cv = StratifiedGroupKFold(n_splits=folds)
+    cv = StratifiedGroupKFold(n_splits=folds, shuffle=True, random_state=SEED)
     scores_cv = []
     data_indices = np.arange(N)
 
@@ -119,11 +122,10 @@ def stratified_group_k_fold(path, groups, model, images, folds=5, verbose=True, 
 
 # TODO: check if assumption correct, that we do not need X data to create the splits
 # TODO: currently only working for binary classification -> make for multiclass
-def stratified_k_fold(path, groups, model, images, folds=5, verbose=True, variable=0) -> dict:
+def stratified_k_fold(path, model, images, folds=5, verbose=True, variable=0) -> dict:
     """
     Calculates stratified k-fold for a specified model
     :param path: path to folder where data is stored
-    :param groups: subjectID for all datapoints in dataset
     :param model: model implementing train, fit, predict
     :param folds: k folds
     :param verbose: whether to print mean test set metrics
@@ -132,9 +134,6 @@ def stratified_k_fold(path, groups, model, images, folds=5, verbose=True, variab
     :return: dictionary with test set metrics for each fold
     """
     assert variable in (0, 1)
-
-    # for reproducability
-    SEED = 42
 
     # calculate data size
     if images:
