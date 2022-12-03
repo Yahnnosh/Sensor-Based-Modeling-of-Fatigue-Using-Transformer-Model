@@ -132,6 +132,10 @@ def stratified_group_k_fold(path, groups, model, images, folds=5, verbose=True, 
             y_test = y[test_indices]
 
             # training
+            try:
+                model.reset()
+            except AttributeError:
+                pass  # model has no trainable parameters
             model.fit(train_indices)
 
             # predict
@@ -198,6 +202,10 @@ def stratified_k_fold(path, model, images, folds=5, verbose=True, variable=0) ->
             y_test = y[test_indices]
 
             # training
+            try:
+                model.reset()
+            except AttributeError:
+                pass  # model has no trainable parameters
             model.fit(train_indices)
 
             # predict
@@ -264,6 +272,10 @@ def leave_one_subject_out(path, groups, model, images, verbose=True, variable=0)
             y_test = y[test_indices]
 
             # training
+            try:
+                model.reset()
+            except AttributeError:
+                pass  # model has no trainable parameters
             model.fit(train_indices)
 
             # predict
