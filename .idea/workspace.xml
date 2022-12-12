@@ -5,9 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="914d00a5-6f3d-4f22-90a0-25d214b77e95" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Deep Learning/Project/.idea/Exploring Model Fusion with Optimal Transport on Transformers.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../Deep Learning/Project/.idea/Exploring Model Fusion with Optimal Transport on Transformers.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Deep Learning/Project/dataloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Deep Learning/Project/dataloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Deep Learning/Project/model_fusion.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Deep Learning/Project/model_fusion.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Deep Learning/Project/optimal_transport.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../Deep Learning/Project/optimal_transport.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/fatigue_modeling.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/fatigue_modeling.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CNN.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CNN.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/imputation_comparison.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/imputation_comparison.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +54,8 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/janoschjungo/Documents/ETH/MSc 3rd semester/Semester project&quot;
+    &quot;last_opened_file_path&quot;: &quot;/Users/janoschjungo/Documents/ETH/MSc 3rd semester/Semester project&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
   <component name="RecentsManager">
