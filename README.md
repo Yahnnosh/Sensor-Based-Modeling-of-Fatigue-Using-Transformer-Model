@@ -14,6 +14,7 @@ flowchart TD;
     
     id6([preproc_data_stat]) --> id8([random_forest])
     id6([preproc_data_stat]) --> id10([XGBoost])
+    id2([preproc_data]) <.-> id12([imputation_comparison])
     id2([preproc_data]) --> id5([CNN])
     id5([CNN]) <.-> temp
     
