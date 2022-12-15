@@ -244,7 +244,8 @@ def import_data(discard_variables=True, discard_days=True, THRESHOLD=60):
             if length < THRESHOLD:
                 discarded_days.append(day)
 
-        temp = discarded_days.copy() # just for print information
+        print(f'discarded days (less than {THRESHOLD}min of data): {discarded_days}')
+        temp = [] # just for print information
 
         # days where sensor is out for full day
         for day in days:
@@ -254,13 +255,12 @@ def import_data(discard_variables=True, discard_days=True, THRESHOLD=60):
                 # if only missing data for full day -> discard day
                 if np.sum(np.where(np.isnan(time_series), 0.0, 1.0)) == 0: # NaN -> 0, data -> 1
                     discarded_days.append(day)
+                    temp.append(day)
 
         data = data.drop(discarded_days)
         data = data.reset_index(drop=True)
 
-        print(f'discarded days (less than {THRESHOLD}min of data): {temp}')
-        discarded_days.remove(temp)
-        print(f'discarded days (sensor out all day): {discarded_days}')
+        print(f'discarded days (sensor out all day): {temp}')
 
     return data
 
@@ -273,7 +273,7 @@ def data_to_days(dat) -> list:
     data_daily = []
 
     n_days, _ = dat.shape
-    for day in range(n_days):
+    for day in tqdm(range(n_days)):
         # create dataframe with data by day (i.e. each row is full daily data of one variable, each column is a one-minute measurement)
 
         # timestamps
