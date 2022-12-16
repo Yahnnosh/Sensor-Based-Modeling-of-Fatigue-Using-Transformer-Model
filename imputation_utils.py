@@ -3,7 +3,6 @@ from pandasql import sqldf
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors
-from tsaug import Drift, AddNoise, TimeWarp
 from sklearn.preprocessing import StandardScaler
 import random
 from tqdm import tqdm
@@ -57,6 +56,32 @@ def plotter(day, dat):
         plt.subplot(3, 4, i+1)
         plt.title(variable)
         plt.plot(time_series, col)
+        plt.xlim([0, length])
+
+def plotter_from_array(dat):
+    """
+    Same as plotter(day, dat) but here dat is array of daily data (shape: [1, 1440, 10])
+    """
+    if not isinstance(dat, np.ndarray):
+        dat = dat.detach().numpy()
+
+    plt.figure()
+    plt.subplots_adjust(left=0.1,
+                        bottom=0.01,
+                        right=1.2,
+                        top=1.5,
+                        wspace=0.4,
+                        hspace=0.4)
+    batch_size, length, variables = dat.shape
+    assert batch_size == 1 and length == 1440 and variables == 10
+
+    # TODO: not sure if correct VARIABLES if we discard in import
+    for i, variable in enumerate(VARIABLES):
+        time_series = dat[:, :, i].reshape(-1)
+
+        plt.subplot(3, 4, i+1)
+        plt.title(variable)
+        plt.plot(time_series)
         plt.xlim([0, length])
 
 def plotter_spec(day, dat, NFFT=256, noverlap=128):
@@ -262,7 +287,7 @@ def import_data(discard_variables=True, discard_days=True, THRESHOLD=60):
 
         print(f'discarded days (sensor out all day): {temp}')
 
-    return data
+    return data, VARIABLES
 
 def data_to_days(dat) -> list:
     """
@@ -823,15 +848,6 @@ class MaskedMSELoss(nn.Module):
         masked_true = torch.masked_select(y_true, mask)
 
         return self.mse_loss(masked_pred, masked_true)
-
-
-
-
-
-
-
-
-
 
 
 
