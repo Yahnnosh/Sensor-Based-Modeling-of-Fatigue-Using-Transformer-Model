@@ -164,50 +164,6 @@ def missing_data_per_variable(dat):
     missing_data_variable = {variable: np.mean(na_data) for variable, na_data in missing_data_variable.items()}
     return missing_data_variable
 
-def imputer(dat, method, **kwargs):
-    """Imputes data by day (!) according to specified method"""
-    data_imputed = dat.copy()
-
-    assert method in ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest')
-    if method == 'mean':
-        value = data_imputed.mean(axis=1)
-        data_imputed = data_imputed.transpose().fillna(value).transpose() # not very pretty but works
-    elif method == 'median':
-        value = data_imputed.median(axis=1)
-        data_imputed = data_imputed.transpose().fillna(value).transpose() # not very pretty but works
-    elif method == 'mode':
-        value = data_imputed.mode(axis=1)[0]
-        data_imputed = data_imputed.transpose().fillna(value).transpose() # not very pretty but works
-    else:
-        MAX_FILL = 1440 # maximum imputation window (from both sides!)
-        data_imputed = data_imputed.interpolate(method=method, axis=1, limit=MAX_FILL, limit_direction='both', fill_value='extrapolate', **kwargs)
-
-    return data_imputed
-
-def visualize_imputation(dat, method, **kwargs):
-    """Plots data vs. imputed data"""
-    data_imputed = imputer(dat, method, **kwargs)
-
-    # visualize imputation
-    plt.subplots_adjust(left=0.1,
-                        bottom=0.01,
-                        right=1.7,
-                        top=1.0,
-                        wspace=0.4,
-                        hspace=0.4)
-
-    for i, variable in enumerate(VARIABLES):
-        plt.subplot(2, 5, i+1)
-        plt.title(variable)
-
-        # post-imputation
-        ax = data_imputed.iloc[i].plot(color='red', linewidth=1.0)
-        ax.set_xticklabels([], minor=True)
-
-        # pre-imputation
-        ax = dat.iloc[i].plot()
-        ax.set_xticklabels([], minor=True)
-
 
 # DATA LOADING/PROC UTILS
 def import_data(discard_variables=True, discard_days=True, THRESHOLD=60):
@@ -395,7 +351,53 @@ def visualize_mask(mask, day='?'):
     #plt.colorbar()
     plt.show()
 
-def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15) -> dict:
+def imputer(dat, method, order, model, device):
+    """Imputes data by day (!) according to specified method"""
+    data_imputed = dat.copy()
+
+    assert method in ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest', 'transformer')
+    if method == 'transformer':
+        data_imputed = pd.DataFrame(masked_prediction(model, data_imputed, device))
+    elif method == 'mean':
+        value = data_imputed.mean(axis=1)
+        data_imputed = data_imputed.transpose().fillna(value).transpose() # not very pretty but works
+    elif method == 'median':
+        value = data_imputed.median(axis=1)
+        data_imputed = data_imputed.transpose().fillna(value).transpose() # not very pretty but works
+    elif method == 'mode':
+        value = data_imputed.mode(axis=1)[0]
+        data_imputed = data_imputed.transpose().fillna(value).transpose() # not very pretty but works
+    else:
+        MAX_FILL = 1440 # maximum imputation window (from both sides!)
+        data_imputed = data_imputed.interpolate(method=method, axis=1, limit=MAX_FILL, limit_direction='both', fill_value='extrapolate', order=order)
+
+    return data_imputed
+
+def visualize_imputation(dat, method, order, model, device):
+    """Plots data vs. imputed data"""
+    data_imputed = imputer(dat, method, order, model, device)
+
+    # visualize imputation
+    plt.subplots_adjust(left=0.1,
+                        bottom=0.01,
+                        right=1.7,
+                        top=1.0,
+                        wspace=0.4,
+                        hspace=0.4)
+
+    for i, variable in enumerate(VARIABLES):
+        plt.subplot(2, 5, i+1)
+        plt.title(variable)
+
+        # post-imputation
+        ax = data_imputed.iloc[i].plot(color='red', linewidth=1.0)
+        ax.set_xticklabels([], minor=True)
+
+        # pre-imputation
+        ax = dat.iloc[i].plot()
+        ax.set_xticklabels([], minor=True)
+
+def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15, model=None, device=None):
     """
     Tests all imputation methods
     :param dat: data by day (!)
@@ -404,7 +406,8 @@ def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15) -> dict:
     :return: mean absolute error (MAE) & mean relative error (MRE) on masked data (sorted dict)
     """
     n_days = len(dat)
-    imputation_methods = ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest')
+    imputation_methods = ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest') if model is None else \
+        ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest', 'transformer')
 
     # build masks
     mask_shape = dat[0].shape
@@ -415,7 +418,7 @@ def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15) -> dict:
     # score each imputation method
     scores = {}
     for imputation_method in imputation_methods:
-        imputation_erorrs = np.array([])
+        imputation_errors = np.array([])
         reals = np.array([]) # for MRE
         for day in range(n_days):
             data_day = dat[day] # data for current day
@@ -423,14 +426,14 @@ def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15) -> dict:
 
             # impute masked data
             masked_data = pd.DataFrame(np.where(mask == 1.0, np.NaN, data_day)) # masked -> NaN
-            data_imputed = imputer(masked_data, imputation_method, order=2) # order for spline
+            data_imputed = imputer(masked_data, imputation_method, order=2, model=model, device=device) # order for spline, device for transformer
 
             # calculate error
             real_data = data_day.to_numpy()[mask == 1.0]
             imputed_data = data_imputed.to_numpy()[mask == 1.0]
 
             # save
-            imputation_errors = np.concatenate((imputation_erorrs,
+            imputation_errors = np.concatenate((imputation_errors,
                                                 np.abs(real_data - imputed_data)),
                                                axis=None)
             reals = np.concatenate((reals, real_data), axis=None)
@@ -438,7 +441,6 @@ def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15) -> dict:
         mae = np.mean(imputation_errors) # MAE
         mre = np.sum(imputation_errors) / np.sum(np.abs(reals)) # MRE
         scores[imputation_method] = (mae, mre)
-
 
     return sorted(scores.items(), key=lambda x: x[1][0]) # sort by MAE
 
@@ -825,16 +827,165 @@ class MaskedMSELoss(nn.Module):
         return self.mse_loss(masked_pred, masked_true)
 
 
+def masked_prediction(model, masked_data: pd.DataFrame, device):
+    """
+    Predicts full day data from missing day data
+    :param model: transformer for imputation
+    :param masked_data: dataframe of data for one day (with NaNs) (shape: (len(VARIABLES), 1440))
+    """
+    with torch.no_grad():
+        sequence_length = model.max_len
+
+        # reshape
+        masked_data = masked_data.transpose().to_numpy() # pandas -> numpy + reshape
+
+        # split day into batches
+        n_batches = masked_data.shape[0] // sequence_length
+        batch = np.array([masked_data[(i * sequence_length):((i + 1) * sequence_length), :] for i in range(n_batches)])
+
+        # mask missing data
+        batch[np.isnan(batch)] = 0.0 # missing data -> 0.0 for transformer
+        batch = torch.tensor(batch).float().to(device) # array -> tensor + add batch dimension
+        X = batch
+
+        # predict
+        y_pred = model(X, padding_masks=torch.ones(n_batches, sequence_length).bool().to(device)) # padding mask all True
+
+        # put back into cpu
+        y_pred = y_pred.to('cpu')
+
+        # concatenate batches into full day sequence
+        yp = y_pred[0, :, :].detach().numpy()
+        for i in range(1, y_pred.shape[0]):
+            yp = np.concatenate((yp, y_pred[i, :, :].detach().numpy()), axis=0)
+        yp = yp.transpose()
+
+        return yp
 
 
+def show_prediction(model, dat: list, day: int, lm, r, device, show_mask=True, show_mask_plot=False,
+                    prediction_only=False, full_prediction=False):
+    """
+    Visualizes the prediction of the transformer model
+    :param model: transformer model
+    :param dat: list of daily data (each a pandas dataframe)
+    :param day: index of specific day in dat
+    :param lm: mean missing data sequence
+    :param r: missing ratio
+    :param show_mask: whether to show the computed mask or not
+    :param show_mask_plot: whether to show the computed mask in the plot as grey bars
+    :param prediction_only: whether to also show the true values or just prediction
+    :param full_prediction: whether to show the full prediction or just imputed missing data
+    :return:
+    """
+    with torch.no_grad():
+        sequence_length = model.max_len
 
-# TODO: dataloader (one day) + normalization
+        full_day = dat[day].copy()
+        mask = masker(full_day, lm=lm, masking_ratio=r)
+        mask[mask == 1] = 0 # we don't mask additional segments during testing
 
-# TODO: baseline imputation methods
+        # reshape
+        full_day = full_day.transpose().to_numpy() # pandas -> numpy + reshape
+        mask = mask.transpose()
 
-# TODO: tester (+ vs. baselines)
+        # split day into batches
+        n_batches = full_day.shape[0] // sequence_length
+        batch = np.array([full_day[(i * sequence_length):((i + 1) * sequence_length), :] for i in range(n_batches)])
+        mask = np.array([mask[(i * sequence_length):((i + 1) * sequence_length), :] for i in range(n_batches)])
 
-# TODO: visualizatin of imputation
+        # mask missing data
+        y_true = torch.tensor(batch).float().to(device) # target values shouldn't be masked
+        batch[mask.astype(bool)] = 0.0 # missing data -> 0.0 for transformer
+        batch = torch.tensor(batch).float().to(device) # array -> tensor + add batch dimension
+        X = batch
 
-# TODO: full transformer model here to be callable for preproc
-#%%
+        # predict
+        y_pred = model(X, padding_masks=torch.ones(n_batches, sequence_length).bool().to(device)) # padding mask all True
+
+        # put back into cpu
+        y_true = y_true.to('cpu')
+        y_pred = y_pred.to('cpu')
+
+        # concatenate batches into full day sequence
+        y = y_true[0, :, :].numpy()
+        for i in range(1, y_true.shape[0]):
+            y = np.concatenate((y, y_true[i, :, :].numpy()), axis=0)
+        y = y.transpose()
+
+        yp = y_pred[0, :, :].detach().numpy()
+        for i in range(1, y_pred.shape[0]):
+            yp = np.concatenate((yp, y_pred[i, :, :].detach().numpy()), axis=0)
+        yp = yp.transpose()
+
+        m = mask[0, :, :]
+        for i in range(1, mask.shape[0]):
+            m = np.concatenate((m, mask[i, :, :]), axis=0)
+        m = m.transpose()
+
+        # visualize mask
+        if show_mask:
+            visualize_mask(m, str(day))
+
+        # plot imputation
+        plt.figure()
+        plt.subplots_adjust(left=0.1,
+                            bottom=0.01,
+                            right=1.2,
+                            top=1.5,
+                            wspace=0.4,
+                            hspace=0.4)
+
+        if prediction_only:
+            for i, variable in enumerate(VARIABLES):
+                mask_variable = m[i, :] # 0: available, 1: masked (purposefully set to NaN), 2: missing (NaN from beginning)
+                time_series_imputed = yp[i, :]
+                if not full_prediction:
+                    time_series_imputed[mask_variable != 2] = np.NaN # remove data we know anyway
+
+                plt.subplot(3, 4, i+1)
+                if show_mask_plot:
+                    y_min, y_max = np.nanmin(time_series_imputed), np.nanmax(time_series_imputed)
+                    masked = mask_variable != 0
+                    # build continuous masking sequences for plot
+                    seq = []
+                    for j in range(len(masked)):
+                        if masked[j]: # True means datapoint is masked
+                            seq.append(j)
+                        else:
+                            if len(seq) != 0:
+                                # plot background
+                                plt.axhspan(y_min, y_max, seq[0] / 1440, seq[-1] / 1440, facecolor='grey', alpha=0.2)
+                                seq = []
+                plt.title(variable)
+                plt.plot(time_series_imputed, color='red', linewidth=1)
+                plt.xlim([0, 1440])
+                plt.plot()
+        else:
+            for i, variable in enumerate(VARIABLES):
+                mask_variable = m[i, :] # 0: available, 1: masked (purposefully set to NaN), 2: missing (NaN from beginning)
+                time_series = y[i, :]
+                time_series_imputed = yp[i, :]
+                if not full_prediction:
+                    time_series_imputed[mask_variable != 2] = np.NaN # remove data we know anyway
+
+                plt.subplot(3, 4, i+1)
+                if show_mask_plot:
+                    y_min, y_max = min(np.nanmin(time_series), np.nanmin(time_series_imputed)), \
+                                   max(np.nanmax(time_series), np.nanmax(time_series_imputed))
+                    masked = mask_variable != 0
+                    # build continuous masking sequences for plot
+                    seq = []
+                    for j in range(len(masked)):
+                        if masked[j]: # True means datapoint is masked
+                            seq.append(j)
+                        else:
+                            if len(seq) != 0:
+                                # plot background
+                                plt.axhspan(y_min, y_max, seq[0] / 1440, seq[-1] / 1440, facecolor='grey', alpha=0.2)
+                                seq = []
+                plt.title(variable)
+                plt.plot(time_series, linewidth=1)
+                plt.plot(time_series_imputed, color='red', linewidth=1)
+                plt.xlim([0, 1440])
+                plt.plot()
