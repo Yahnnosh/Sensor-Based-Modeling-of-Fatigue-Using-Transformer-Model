@@ -393,6 +393,7 @@ def visualize_mask(mask, day='?'):
     plt.xlabel('data length [min]')
     plt.ylabel('variable')
     #plt.colorbar()
+    plt.show()
 
 def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15) -> dict:
     """
