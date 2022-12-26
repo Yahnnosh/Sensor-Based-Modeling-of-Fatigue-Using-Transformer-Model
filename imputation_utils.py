@@ -439,10 +439,60 @@ def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15, model=None, dev
             reals = np.concatenate((reals, real_data), axis=None)
 
         mae = np.mean(imputation_errors) # MAE
-        mre = np.sum(imputation_errors) / np.sum(np.abs(reals)) # MRE
+        mre = np.mean(np.divide(np.abs(imputation_errors), np.abs(reals) + 1e-6)) # MRE (+ epsilon s.t. no division by zero error)
         scores[imputation_method] = (mae, mre)
 
     return sorted(scores.items(), key=lambda x: x[1][0]) # sort by MAE
+
+
+def test_imputation_methods_by_variable(dat: list, lm=3, masking_ratio=0.15, model=None, device=None):
+    """
+    Tests all imputation methods
+    :param dat: data by day (!)
+    :param lm: mean sequence length
+    :param masking_ratio: ratio of masking/non-masking
+    :return: mean absolute error (MAE) & mean relative error (MRE) on masked data (sorted dict)
+    """
+    n_days = len(dat)
+    imputation_methods = ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest') if model is None else \
+        ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest', 'transformer')
+
+    # build masks
+    mask_shape = dat[0].shape
+    masks = np.zeros((n_days, *mask_shape))
+    for day in range(n_days):
+        masks[day] = masker(dat[day], lm=lm, masking_ratio=masking_ratio)
+
+    # score each imputation method
+    scores = {}
+    for imputation_method in imputation_methods:
+        imputation_errors = {variable: [] for variable in VARIABLES}
+        reals = {variable: [] for variable in VARIABLES} # for MRE
+        for day in range(n_days):
+            data_day = dat[day] # data for current day
+            mask = masks[day] # mask for current day (all imputation methods use same masks)
+
+            # impute masked data
+            masked_data = pd.DataFrame(np.where(mask == 1.0, np.NaN, data_day)) # masked -> NaN
+            data_imputed = imputer(masked_data, imputation_method, order=2, model=model, device=device) # order for spline, device for transformer
+
+            # calculate error
+            errors = {variable: data_imputed.to_numpy()[i, :][mask[i, :] == 1.0] - data_day.to_numpy()[i, :][mask[i, :] == 1.0] \
+                      for i, variable in enumerate(VARIABLES)}
+            real_data = {variable: data_day.to_numpy()[i, :][mask[i, :] == 1.0] for i, variable in enumerate(VARIABLES)}
+            for variable, value in imputation_errors.items():
+                imputation_errors[variable] = np.append(value, errors[variable])
+            for variable, value in reals.items():
+                reals[variable] = np.append(value, real_data[variable])
+
+        for variable in VARIABLES:
+            errors = imputation_errors[variable]
+            mae = np.mean(np.abs(errors))
+            mre = np.sum(np.abs(errors)) / np.sum(np.abs(reals)) # TODO: formula by Novartis - WRONG?
+
+            scores[imputation_method] = {variable: (mae, mre)}
+
+    return scores
 
 
 # TRANSFORMER
