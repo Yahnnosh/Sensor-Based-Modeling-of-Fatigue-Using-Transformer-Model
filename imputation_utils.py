@@ -258,8 +258,7 @@ def data_to_days(dat) -> list:
     return data_daily
 
 def normalize_daily_variables(data_day):
-    """Normalized each variable in data of one
-    day"""
+    """Normalized each variable in data of one day"""
     n_rows, n_cols = data_day.shape
     for row in range(n_rows):
         data_day.iloc[row, :] = StandardScaler().fit_transform(np.array([data_day.iloc[row, :]]).reshape(-1, 1)).reshape(-1)
