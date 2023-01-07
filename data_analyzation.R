@@ -95,7 +95,7 @@ x = 1:27
 
 table(data.mean$subjectID) # treats as categorical data with multiple draws
 barplot(table(data.mean$subjectID),
-        main="days with filled out questionnaires",
+        main="Days with filled out questionnaires",
         xlab="subject", 
         ylab="days")
 
@@ -104,7 +104,7 @@ sort(table(data.mean$subjectID))[23:27] # top 4 “contributors“
 # VAS
 sub = table(data.mean$VAS, data.mean$subjectID)  # with fatigue labels
 barplot(sub,
-        main="days with filled out questionnaires (fatigue: VAS)",
+        main="Days with filled out questionnaires (fatigue: VAS)",
         xlab="subject", 
         ylab="days",
         col=c("blue", "red"))
@@ -114,7 +114,7 @@ apply(sub, MARGIN=1, FUN=sum) / sum(sub) # percentage vigilant/fatigued
 # phF
 sub = table(data.mean$phF, data.mean$subjectID)  # with fatigue labels
 barplot(sub,
-        main="days with filled out questionnaires (fatigue: phF)",
+        main="Days with filled out questionnaires (fatigue: phF)",
         xlab="subject", 
         ylab="days",
         col=c("blue", "red"))
@@ -124,7 +124,7 @@ apply(sub, MARGIN=1, FUN=sum) / sum(sub) # percentage vigilant/fatigued
 # MF
 sub = table(data.mean$MF, data.mean$subjectID)  # with fatigue labels
 barplot(sub,
-        main="days with filled out questionnaires (fatigue: MF)",
+        main="Days with filled out questionnaires (fatigue: MF)",
         xlab="subject", 
         ylab="days",
         col=c("blue", "red"))

@@ -388,7 +388,9 @@ def scores_tables():
                 # load scores for model
                 with open(full_path) as f:
                     scores = f.read()
-                scores = json.loads(scores.replace('\'', '\"'))
+                    scores = scores.replace('\'', '\"')
+                    #scores = scores.replace(', None', '')
+                scores = json.loads(scores)
 
                 # phF/MF
                 for variable in (0, 1):
@@ -432,12 +434,15 @@ def scores_tables():
                           'strat_group_5_fold': 'Stratified group 5-fold (Mental fatigue)'}[path]
 
             # to latex
-            models = [{'cnn.txt': 'CNN',
+            """models = [{'cnn.txt': 'CNN',
                        'cnn2.txt': 'CNN (2nd run)',
                        'majority_voting.txt': 'Majority Voting',
-                       'random_guess.txt': 'Random guess',
+                       'random_guess.txt': 'Random Guess',
                        'xgboost.txt': 'XGBoost',
-                       'random_forest.txt': 'Random Forest'}[model] for model in os.listdir(score_path + '/' + path)]
+                       'random_forest.txt': 'Random Forest'}[model] for model in os.listdir(score_path + '/' + path)]"""
+            models = [model.capitalize().replace('Cnn', 'CNN').replace('Xgboost', 'XGBoost').
+                          replace('_', ' ').replace('.txt', '').replace('forest', 'Forest').replace('guess', 'Guess')
+                      for model in os.listdir(score_path + '/' + path)]
             models = pd.Series(models)
             # pHF
             df = pd.DataFrame(table_phF)
@@ -558,6 +563,15 @@ def p_value_tables():
             # prettier names
             df = df.rename(columns={"accuracy": "Accuracy", "balanced_accuracy": "Balanced accuracy",
                                     "f1": "F1-score", "recall": "Recall", "precision": 'Precision'})
+            df = df.set_index(
+                pd.Series(
+                    [str(n).capitalize().replace('Cnn', 'CNN').replace('Xgboost', 'XGBoost').
+                         replace('_', ' ').replace('.txt', '').replace('forest', 'Forest').
+                         replace('guess', 'Guess').replace('majority', 'Majority').replace('random', 'Random').
+                         replace('voting', 'Voting')
+                     for n in list(df.index)]
+                )
+            )
             # to latex
             phF.append(df.to_latex(index=True,
                                    bold_rows=True,
@@ -599,6 +613,15 @@ def p_value_tables():
             # prettier names
             df = df.rename(columns={"accuracy": "Accuracy", "balanced_accuracy": "Balanced accuracy",
                                     "f1": "F1-score", "recall": "Recall", "precision": 'Precision'})
+            df = df.set_index(
+                pd.Series(
+                    [str(n).capitalize().replace('Cnn', 'CNN').replace('Xgboost', 'XGBoost').
+                         replace('_', ' ').replace('.txt', '').replace('forest', 'Forest').
+                         replace('guess', 'Guess').replace('majority', 'Majority').replace('random', 'Random').
+                         replace('voting', 'Voting')
+                     for n in list(df.index)]
+                )
+            )
             # to latex
             MF.append(df.to_latex(index=True,
                                    bold_rows=True,

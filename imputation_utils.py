@@ -15,6 +15,7 @@ import torch
 from torch import nn, Tensor
 from torch.nn import functional as F
 from torch.nn.modules import MultiheadAttention, Linear, Dropout, BatchNorm1d, TransformerEncoderLayer
+import scipy.stats
 
 
 # FIXED PARAMETERS
@@ -396,7 +397,36 @@ def visualize_imputation(dat, method, order, model, device):
         ax = dat.iloc[i].plot()
         ax.set_xticklabels([], minor=True)
 
-def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15, model=None, device=None):
+
+def discard_inf_or_nan(x):
+    x = x[~np.isnan(x)] # we ignore NaNs
+    x = x[~np.isinf(x)] # we ignore infs
+    return x
+
+def mae(y_trues, y_preds):
+    errors = y_trues - y_preds
+    return np.mean(np.abs(errors))
+
+def mre(y_trues, y_preds):
+    errors = y_trues - y_preds
+    relative_abs_errors = np.divide(np.abs(errors), np.abs(y_trues))
+    relative_abs_errors = discard_inf_or_nan(relative_abs_errors) # filter out non-numeric values
+
+    return np.mean(relative_abs_errors)
+
+def rmse(y_trues, y_preds):
+    errors = y_trues - y_preds
+    squared_errors = errors**2
+    return np.sqrt(np.mean(squared_errors))
+
+def pearson_corr(y_trues, y_preds):
+    return scipy.stats.pearsonr(y_trues, y_preds)[0]
+
+def spearman_corr(y_trues, y_preds):
+    return scipy.stats.spearmanr(y_trues, y_preds).correlation
+
+
+'''def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15, model=None, device=None):
     """
     Tests all imputation methods
     :param dat: data by day (!)
@@ -438,10 +468,132 @@ def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15, model=None, dev
             reals = np.concatenate((reals, real_data), axis=None)
 
         mae = np.mean(imputation_errors) # MAE
-        mre = np.mean(np.divide(np.abs(imputation_errors), np.abs(reals) + 1e-6)) # MRE (+ epsilon s.t. no division by zero error)
+        mre = np.divide(np.abs(imputation_errors), np.abs(reals)) # MRE
+        mre = mre[~np.isnan(mre)] # we ignore NaNs (if real value == 0, there is no relative error)
+        mre = mre[~np.isinf(mre)] # we ignore infs (if real value ~= 0, the relative error can explode)
+        mre = np.mean(mre)
         scores[imputation_method] = (mae, mre)
 
+    return sorted(scores.items(), key=lambda x: x[1][0]) # sort by MAE'''
+
+
+def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15, model=None, device=None):
+    """
+    Tests all imputation methods
+    :param dat: data by day (!)
+    :param lm: mean sequence length
+    :param masking_ratio: ratio of masking/non-masking
+    :return: mean absolute error (MAE) & mean relative error (MRE) on masked data (sorted dict)
+    """
+    n_days = len(dat)
+    imputation_methods = ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest') if model is None else \
+        ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest', 'transformer')
+
+    # build masks
+    mask_shape = dat[0].shape
+    masks = np.zeros((n_days, *mask_shape))
+    for day in range(n_days):
+        masks[day] = masker(dat[day], lm=lm, masking_ratio=masking_ratio)
+
+    # score each imputation method
+    scores = {}
+    for imputation_method in imputation_methods:
+        y_preds = np.array([])
+        y_trues = np.array([])
+        for day in range(n_days):
+            data_day = dat[day] # data for current day
+            mask = masks[day] # mask for current day (all imputation methods use same masks)
+
+            # impute masked data
+            masked_data = pd.DataFrame(np.where(mask == 1.0, np.NaN, data_day)) # masked -> NaN
+            data_imputed = imputer(masked_data, imputation_method, order=2, model=model, device=device) # order for spline, device for transformer
+
+            # calculate error
+            real_data = data_day.to_numpy()[mask == 1.0]
+            imputed_data = data_imputed.to_numpy()[mask == 1.0]
+
+            # save
+            y_preds = np.concatenate([y_preds, imputed_data], axis=None)
+            y_trues = np.concatenate([y_trues, real_data], axis=None)
+
+        mae_ = mae(y_trues, y_preds)
+        mre_ = mre(y_trues, y_preds)
+        rmse_ = rmse(y_trues, y_preds)
+        pearson_corr_ = pearson_corr(y_trues, y_preds)
+        spearman_corr_ = spearman_corr(y_trues, y_preds)
+
+        scores[imputation_method] = (mae_, mre_, rmse_, pearson_corr_, spearman_corr_)
+
     return sorted(scores.items(), key=lambda x: x[1][0]) # sort by MAE
+
+
+def test_imputation_methods_by_sequence(dat: list, lm=3, masking_ratio=0.15, model=None, device=None):
+    """
+    Tests all imputation methods
+    :param dat: data by day (!)
+    :param lm: mean sequence length
+    :param masking_ratio: ratio of masking/non-masking
+    :return: mean absolute error (MAE) & mean relative error (MRE) on masked data (sorted dict)
+    """
+    n_days = len(dat)
+    imputation_methods = ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest') if model is None else \
+        ('mean', 'median', 'mode', 'linear', 'quadratic', 'spline', 'nearest', 'transformer')
+
+    # build masks
+    mask_shape = dat[0].shape
+    masks = np.zeros((n_days, *mask_shape))
+    for day in range(n_days):
+        masks[day] = masker(dat[day], lm=lm, masking_ratio=masking_ratio)
+
+    # score each imputation method
+    scores = {imputation_method: {'small': None, 'medium': None, 'long': None} for imputation_method in imputation_methods}
+    for imputation_method in imputation_methods:
+        imputation_errors = []
+        reals = [] # for MRE
+        for day in range(n_days):
+            data_day = dat[day] # data for current day
+            mask = masks[day] # mask for current day (all imputation methods use same masks)
+
+            # impute masked data
+            masked_data = pd.DataFrame(np.where(mask == 1.0, np.NaN, data_day)) # masked -> NaN
+            data_imputed = imputer(masked_data, imputation_method, order=2, model=model, device=device) # order for spline, device for transformer
+
+            # calculate error
+            for i, _ in enumerate(VARIABLES):
+                mask_variable = mask[i, :] # mask for current variable
+                imputed_variable = data_imputed.to_numpy()[i, :] # imputed data for current variable
+                masked_elements = np.where(mask_variable == 1.0)[0] # boolean array, noting where data is imputed (imputed: 1.0)
+                sequence_indices = np.split(masked_elements, np.where(np.diff(masked_elements) > 1)[0]) # indices for continuous imputation sequences
+                for sequence in sequence_indices:
+                    real = data_day.to_numpy()[i, :][sequence]
+                    error = imputed_variable[sequence] - real
+
+                    imputation_errors.append(error)
+                    reals.append(real)
+
+        sequence_lengths = [len(seq) for seq in imputation_errors]
+
+        # we define long sequences as > 75th percentile, small sequences as < 25th percentile, medium sequences between 25th, 75th percentile
+        long_sequence_threshold = np.percentile(sequence_lengths, 75)
+        small_sequence_threshold = np.percentile(sequence_lengths, 25)
+
+        long_sequences_selection = sequence_lengths > long_sequence_threshold # boolean masks
+        small_sequences_selection = sequence_lengths < small_sequence_threshold # boolean masks
+        medium_sequences_selection = (small_sequence_threshold < sequence_lengths) & (sequence_lengths < long_sequence_threshold) # boolean masks
+
+        for name, selection in zip(('small', 'medium', 'long'), (small_sequences_selection, medium_sequences_selection, long_sequences_selection)):
+            errors = np.concatenate(np.array(imputation_errors)[selection])
+            real_data = np.concatenate(np.array(reals)[selection])
+
+            mae = np.mean(np.abs(errors))
+            mre = np.divide(np.abs(errors), np.abs(real_data))
+            mre = mre[~np.isnan(mre)] # we ignore NaNs (if real value == 0, there is no relative error)
+            mre = mre[~np.isinf(mre)] # we ignore infs (if real value ~= 0, the relative error can explode)
+            mre = np.mean(mre)
+
+            scores[imputation_method][name] = (mae, mre)
+
+    return scores
 
 
 def test_imputation_methods_by_variable(dat: list, lm=3, masking_ratio=0.15, model=None, device=None):
@@ -487,7 +639,11 @@ def test_imputation_methods_by_variable(dat: list, lm=3, masking_ratio=0.15, mod
         for variable in VARIABLES:
             errors = imputation_errors[variable]
             mae = np.mean(np.abs(errors))
-            mre = np.sum(np.abs(errors)) / np.sum(np.abs(reals)) # TODO: formula by Novartis - WRONG?
+            '''mre = np.sum(np.abs(errors)) / np.sum(np.abs(reals)) # TODO: formula by Novartis - WRONG?'''
+            mre = np.divide(np.abs(errors), np.abs(real_data))
+            mre = mre[~np.isnan(mre)] # we ignore NaNs (if real value == 0, there is no relative error)
+            mre = mre[~np.isinf(mre)] # we ignore infs (if real value ~= 0, the relative error can explode)
+            mre = np.mean(mre)
 
             scores[imputation_method] = {variable: (mae, mre)}
 
@@ -999,7 +1155,7 @@ def show_prediction(model, dat: list, day: int, lm, r, device, show_mask=True, s
                     # build continuous masking sequences for plot
                     seq = []
                     for j in range(len(masked)):
-                        if masked[j]: # True means datapoint is masked
+                        if masked[j] and j != (len(masked) - 1): # True means datapoint is masked
                             seq.append(j)
                         else:
                             if len(seq) != 0:
@@ -1026,7 +1182,7 @@ def show_prediction(model, dat: list, day: int, lm, r, device, show_mask=True, s
                     # build continuous masking sequences for plot
                     seq = []
                     for j in range(len(masked)):
-                        if masked[j]: # True means datapoint is masked
+                        if masked[j] and j != (len(masked) - 1): # True means datapoint is masked
                             seq.append(j)
                         else:
                             if len(seq) != 0:
