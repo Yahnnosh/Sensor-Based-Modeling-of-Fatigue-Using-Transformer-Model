@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="914d00a5-6f3d-4f22-90a0-25d214b77e95" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/fatigue_modeling.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/fatigue_modeling.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/imputation_comparison.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/imputation_comparison.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CNN.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CNN.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/evaluator.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/preproc_data_stat.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/preproc_data_stat.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xgboost.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/xgboost.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,12 +49,17 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Deep Learning/DL Project/CV" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Deep Learning\DL Project\CV" />
       <recent name="$PROJECT_DIR$" />
       <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Semester project" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Semester project\Output" />
     </key>
   </component>
   <component name="RunManager">

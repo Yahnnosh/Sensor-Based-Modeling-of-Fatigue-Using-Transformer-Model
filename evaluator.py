@@ -480,8 +480,13 @@ def scores_tables():
         print(entry.replace('BOLD\\', r'\textbf').replace('\}', '}'))
 
 
-def p_value_tables():
-    """Calculates statistical performance significance compared to baselines"""
+def p_value_tables(model_names_first=None, model_names_second=None):
+    """
+    Calculates statistical performance significance compared to baselines
+    :param model_names_first: list of models names to use for comparison (incl. '.txt')
+    :param model_names_second: list of models names to use for comparison (incl. '.txt')
+    :return:
+    """
     phF = []
     MF = []
 
@@ -533,7 +538,11 @@ def p_value_tables():
             baselines_name = ['majority_voting.txt', 'random_guess.txt']
             non_baselines_name = [model_name for model_name in models_name if
                                   model_name not in baselines_name]
-            n_models = len(non_baselines_name) * 2
+            if model_names_first is not None:
+                non_baselines_name = [model_name for model_name in model_names_first]
+            if model_names_second is not None:
+                baselines_name = [model_name for model_name in model_names_second]
+            n_models = len(non_baselines_name) * len(baselines_name)
             df = pd.DataFrame({'accuracy': [pd.NA]*n_models,
                                'balanced_accuracy': [pd.NA]*n_models,
                                'f1': [pd.NA]*n_models,
@@ -583,7 +592,11 @@ def p_value_tables():
             baselines_name = ['majority_voting.txt', 'random_guess.txt']
             non_baselines_name = [model_name for model_name in models_name if
                                   model_name not in baselines_name]
-            n_models = len(non_baselines_name) * 2
+            if model_names_first is not None:
+                non_baselines_name = [model_name for model_name in model_names_first]
+            if model_names_second is not None:
+                baselines_name = [model_name for model_name in model_names_second]
+            n_models = len(non_baselines_name) * len(baselines_name)
             df = pd.DataFrame({'accuracy': [pd.NA]*n_models,
                                'balanced_accuracy': [pd.NA]*n_models,
                                'f1': [pd.NA]*n_models,
@@ -639,5 +652,8 @@ if __name__ == '__main__':
     scores_tables()
     print(r'\newpage')
     p_value_tables()
+    """print(r'\newpage')
+    p_value_tables(model_names_first=['cnn (transformer imputation).txt'], 
+                   model_names_second=['cnn (transformer imputation).txt'])"""
 
 #%%

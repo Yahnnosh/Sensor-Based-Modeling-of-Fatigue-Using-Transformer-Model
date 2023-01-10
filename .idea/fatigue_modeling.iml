@@ -6,5 +6,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Desktop" />
     <orderEntry type="module" module-name="Exploring Model Fusion with Optimal Transport on Transformers" />
+    <orderEntry type="module" module-name="ETH" />
   </component>
 </module>
