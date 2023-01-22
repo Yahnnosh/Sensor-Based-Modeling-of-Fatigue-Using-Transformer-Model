@@ -1,4 +1,0 @@
-,MAE,MRE,RMSE,r_{\mathrm{Pearson}},\rho_{\mathrm{Spearman}}
-Long sequences,BOLD{0.664 ± 0.03},4.131 ± 1.055,1.345 ± 1.526,0.247 ± 0.073,0.385 ± 0.015
-Medium sequences,0.676 ± 0.184,3.956 ± 1.701,2.691 ± 10.134,0.293 ± 0.111,0.466 ± 0.012
-Small sequences,0.748 ± 0.02,BOLD{3.143 ± 2.976},BOLD{1.189 ± 0.175},BOLD{0.342 ± 0.049},BOLD{0.483 ± 0.019}

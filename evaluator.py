@@ -494,7 +494,7 @@ def p_value_tables(model_names_first=None, model_names_second=None):
     with warnings.catch_warnings():
         warnings.filterwarnings('ignore')
 
-        score_path = './Scores/relevant'
+        score_path = './Scores'
 
         for path in os.listdir(score_path):
 
@@ -672,7 +672,7 @@ def p_value_tables_stars(model_names_first=None, model_names_second=None):
     with warnings.catch_warnings():
         warnings.filterwarnings('ignore')
 
-        score_path = './Scores/relevant'
+        score_path = './Scores'
 
         for path in os.listdir(score_path):
 
@@ -815,12 +815,11 @@ def p_value_tables_stars(model_names_first=None, model_names_second=None):
 
 
 if __name__ == '__main__':
-    #scores_tables()
-    #print(r'\newpage')
-    #p_value_tables()
-    p_value_tables_stars()
-    """print(r'\newpage')
+    scores_tables()
+    print(r'\newpage')
+    p_value_tables()
+    ##p_value_tables_stars()
+    print(r'\newpage')
     p_value_tables(model_names_first=['cnn.txt'], 
-                   model_names_second=['cnn (transformer imp.).txt'])"""
+                   model_names_second=['cnn (transformer imp.).txt'])
 
-#%%
