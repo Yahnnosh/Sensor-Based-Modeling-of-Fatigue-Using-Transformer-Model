@@ -5,82 +5,52 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="914d00a5-6f3d-4f22-90a0-25d214b77e95" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/CNN.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/CNN.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EXTRA.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/EXTRA2.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/EXTRA3.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/EXTRAimputation_transformer.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Output/discard_additional_days/metadata.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Output/stat_imputation (no discarding)/metadata_stat.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_all_methods.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_sequence_linear.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_sequence_mean.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_sequence_median.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_sequence_mode.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_sequence_nearest.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_sequence_quadratic.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_sequence_spline.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_sequence_transformer.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_variable_linear.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_variable_mean.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_variable_median.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_variable_mode.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_variable_nearest.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_variable_quadratic.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_variable_spline.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/imputation/imputation_by_variable_transformer.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (3).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (full transformer prediction).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (larger).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (linear interpolation - 15 epochs).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (linear interpolation - 25 epochs).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (linear interpolation - discard over 80%).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (linear interpolation).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (transformer imp. (2)).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn (transformer imputation).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Scores/loso/cnn.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/cnn2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/loso/xgboost (transformer imputation).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/loso/cnn (transformer imp.).txt" beforeDir="false" afterPath="$PROJECT_DIR$/Scores/loso/cnn (transformer imp.).txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/loso/cnn.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/loso/majority_voting.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/loso/random_forest.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/loso/random_guess.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/loso/xgboost.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_5_fold/cnn (transformer imp.).txt" beforeDir="false" afterPath="$PROJECT_DIR$/Scores/strat_5_fold/cnn (transformer imp.).txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_5_fold/cnn.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Scores/strat_5_fold/cnn.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_5_fold/majority_voting.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_5_fold/random_forest.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_5_fold/random_guess.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_5_fold/xgboost.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_group_5_fold/cnn (transformer imp.).txt" beforeDir="false" afterPath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (transformer imp.).txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_group_5_fold/cnn.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_group_5_fold/majority_voting.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_group_5_fold/random_forest.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_group_5_fold/random_guess.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/relevant/strat_group_5_fold/xgboost.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_5_fold/cnn (3).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_5_fold/cnn (full transformer prediction).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_5_fold/cnn (linear interpolation - 15 epochs).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_5_fold/cnn (linear interpolation - 25 epochs).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_5_fold/cnn (linear interpolation - discard over 80%).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_5_fold/cnn (linear interpolation).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_5_fold/cnn (transformer imp. (2)).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_5_fold/xgboost (transformer imputation).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (3).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (full transformer prediction).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (larger).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (linear interpolation - 15 epochs).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (linear interpolation - 25 epochs).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (linear interpolation - discard over 80%).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (linear interpolation).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (transformer imp. (2)).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn (transformer imputation).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/cnn2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scores/strat_group_5_fold/xgboost (transformer imputation).txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/evaluator.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scores_epcohs.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/preproc_data_V3-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/x-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/imputation_comparison/transformer_imputation" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/imputation_comparison/transformer_imputation2000" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/imputation_comparison/transformer_imputation6500" beforeDir="false" afterPath="$PROJECT_DIR$/Models/transformer_imputation6500" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/imputation_comparison/transformer_imputation800" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imputation_comparison.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/imputation_comparison.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-173443/events.out.tfevents.1669653461.DESKTOP.27716.0.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-173443/events.out.tfevents.1669653470.DESKTOP.profile-empty" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-173443/plugins/profile/2022-11-28_17-37-50/local.trace" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/events.out.tfevents.1669654903.DESKTOP.31776.0.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/events.out.tfevents.1669654949.DESKTOP.profile-empty" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/events.out.tfevents.1669655162.DESKTOP.31776.2.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_02_29/DESKTOP.input_pipeline.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_02_29/DESKTOP.kernel_stats.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_02_29/DESKTOP.memory_profile.json.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_02_29/DESKTOP.overview_page.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_02_29/DESKTOP.tensorflow_stats.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_02_29/DESKTOP.trace.json.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_02_29/DESKTOP.xplane.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_06_56/DESKTOP.input_pipeline.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_06_56/DESKTOP.kernel_stats.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_06_56/DESKTOP.memory_profile.json.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_06_56/DESKTOP.overview_page.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_06_56/DESKTOP.tensorflow_stats.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_06_56/DESKTOP.trace.json.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/train/plugins/profile/2022_11_28_17_06_56/DESKTOP.xplane.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/validation/events.out.tfevents.1669654982.DESKTOP.31776.1.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/fit/20221128-180129/validation/events.out.tfevents.1669655252.DESKTOP.31776.3.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/func/20221128-173804/events.out.tfevents.1669653484.DESKTOP.27716.1.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/func/20221128-173804/events.out.tfevents.1669653493.DESKTOP.profile-empty" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/func/20221128-173804/plugins/profile/2022-11-28_17-38-13/local.trace" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/func/20221128-174854/events.out.tfevents.1669654134.DESKTOP.27716.2.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/func/20221128-174915/events.out.tfevents.1669654155.DESKTOP.27716.3.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/func/20221128-175013/events.out.tfevents.1669654213.DESKTOP.27716.4.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/func/20221128-175229/events.out.tfevents.1669654349.DESKTOP.27716.5.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/old/other_CNNs/CNN.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/old/other_CNNs/CNN_CV.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/old/other_CNNs/CNN_VGG16.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/old/other_CNNs/CNN_custom.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/old/other_CNNs/CNN_final.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/old/transformer_classifier.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/old/xgboost_test.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/preproc_data_no_segments.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/preproc_data_no_segments.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,16 +100,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Semester project\old\other_CNNs" />
       <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Semester project" />
       <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Deep Learning\DL Project\CV" />
       <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Semester project\Scores\all" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Semester project\Models" />
+      <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Semester project\Scores" />
       <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Deep Learning\-OLD-Exploring Model Fusion with Optimal Transport on Transformers" />
       <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Deep Learning\DL Project\CV\Output" />
       <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Deep Learning\DL Project\CV\Output\without_pretrained_embeddings" />
-      <recent name="C:\Users\jjung\OneDrive\Dokumente\ETH\MSc 3rd semester\Semester project\Output" />
     </key>
   </component>
   <component name="RunManager">
