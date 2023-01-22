@@ -508,7 +508,7 @@ def test_imputation_methods(dat: list, lm=3, masking_ratio=0.15, model=None, dev
             masked_data = pd.DataFrame(np.where(mask == 1.0, np.NaN, data_day)) # masked -> NaN
             data_imputed = imputer(masked_data, imputation_method, order=2, model=model, device=device) # order for spline, device for transformer
 
-            # calculate error
+            # relevant sequences
             real_data = data_day.to_numpy()[mask == 1.0]
             imputed_data = data_imputed.to_numpy()[mask == 1.0]
 
@@ -548,7 +548,7 @@ def test_imputation_methods_by_sequence(dat: list, lm=3, masking_ratio=0.15, mod
     # score each imputation method
     scores = {imputation_method: {'small': None, 'medium': None, 'long': None} for imputation_method in imputation_methods}
     for imputation_method in imputation_methods:
-        imputation_errors = []
+        imputations = []
         reals = [] # for MRE
         for day in range(n_days):
             data_day = dat[day] # data for current day
@@ -566,12 +566,12 @@ def test_imputation_methods_by_sequence(dat: list, lm=3, masking_ratio=0.15, mod
                 sequence_indices = np.split(masked_elements, np.where(np.diff(masked_elements) > 1)[0]) # indices for continuous imputation sequences
                 for sequence in sequence_indices:
                     real = data_day.to_numpy()[i, :][sequence]
-                    error = imputed_variable[sequence] - real
+                    imputed = imputed_variable[sequence]
 
-                    imputation_errors.append(error)
+                    imputations.append(imputed)
                     reals.append(real)
 
-        sequence_lengths = [len(seq) for seq in imputation_errors]
+        sequence_lengths = [len(seq) for seq in imputations]
 
         # we define long sequences as > 75th percentile, small sequences as < 25th percentile, medium sequences between 25th, 75th percentile
         long_sequence_threshold = np.percentile(sequence_lengths, 75)
@@ -582,16 +582,19 @@ def test_imputation_methods_by_sequence(dat: list, lm=3, masking_ratio=0.15, mod
         medium_sequences_selection = (small_sequence_threshold < sequence_lengths) & (sequence_lengths < long_sequence_threshold) # boolean masks
 
         for name, selection in zip(('small', 'medium', 'long'), (small_sequences_selection, medium_sequences_selection, long_sequences_selection)):
-            errors = np.concatenate(np.array(imputation_errors)[selection])
+            imputed_data = np.concatenate(np.array(imputations)[selection])
             real_data = np.concatenate(np.array(reals)[selection])
 
-            mae = np.mean(np.abs(errors))
-            mre = np.divide(np.abs(errors), np.abs(real_data))
-            mre = mre[~np.isnan(mre)] # we ignore NaNs (if real value == 0, there is no relative error)
-            mre = mre[~np.isinf(mre)] # we ignore infs (if real value ~= 0, the relative error can explode)
-            mre = np.mean(mre)
+            y_trues = real_data
+            y_preds = imputed_data
 
-            scores[imputation_method][name] = (mae, mre)
+            mae_ = mae(y_trues, y_preds)
+            mre_ = mre(y_trues, y_preds)
+            rmse_ = rmse(y_trues, y_preds)
+            pearson_corr_ = pearson_corr(y_trues, y_preds)
+            spearman_corr_ = spearman_corr(y_trues, y_preds)
+
+            scores[imputation_method][name] = (mae_, mre_, rmse_, pearson_corr_, spearman_corr_)
 
     return scores
 
@@ -615,10 +618,10 @@ def test_imputation_methods_by_variable(dat: list, lm=3, masking_ratio=0.15, mod
         masks[day] = masker(dat[day], lm=lm, masking_ratio=masking_ratio)
 
     # score each imputation method
-    scores = {}
+    scores = {imputation_method: {variable: None for variable in VARIABLES} for imputation_method in imputation_methods}
     for imputation_method in imputation_methods:
-        imputation_errors = {variable: [] for variable in VARIABLES}
-        reals = {variable: [] for variable in VARIABLES} # for MRE
+        y_preds = {variable: np.array([]) for variable in VARIABLES}
+        y_trues = {variable: np.array([]) for variable in VARIABLES}
         for day in range(n_days):
             data_day = dat[day] # data for current day
             mask = masks[day] # mask for current day (all imputation methods use same masks)
@@ -627,25 +630,25 @@ def test_imputation_methods_by_variable(dat: list, lm=3, masking_ratio=0.15, mod
             masked_data = pd.DataFrame(np.where(mask == 1.0, np.NaN, data_day)) # masked -> NaN
             data_imputed = imputer(masked_data, imputation_method, order=2, model=model, device=device) # order for spline, device for transformer
 
-            # calculate error
-            errors = {variable: data_imputed.to_numpy()[i, :][mask[i, :] == 1.0] - data_day.to_numpy()[i, :][mask[i, :] == 1.0] \
-                      for i, variable in enumerate(VARIABLES)}
-            real_data = {variable: data_day.to_numpy()[i, :][mask[i, :] == 1.0] for i, variable in enumerate(VARIABLES)}
-            for variable, value in imputation_errors.items():
-                imputation_errors[variable] = np.append(value, errors[variable])
-            for variable, value in reals.items():
-                reals[variable] = np.append(value, real_data[variable])
+            # save
+            for i, variable in enumerate(VARIABLES):
+                real_data_var = data_day.to_numpy()[i, :][mask[i, :] == 1.0]
+                imputed_data_var = data_imputed.to_numpy()[i, :][mask[i, :] == 1.0]
+
+                y_preds[variable] = np.concatenate([y_preds[variable], imputed_data_var], axis=None)
+                y_trues[variable] = np.concatenate([y_trues[variable], real_data_var], axis=None)
 
         for variable in VARIABLES:
-            errors = imputation_errors[variable]
-            mae = np.mean(np.abs(errors))
-            '''mre = np.sum(np.abs(errors)) / np.sum(np.abs(reals)) # TODO: formula by Novartis - WRONG?'''
-            mre = np.divide(np.abs(errors), np.abs(real_data))
-            mre = mre[~np.isnan(mre)] # we ignore NaNs (if real value == 0, there is no relative error)
-            mre = mre[~np.isinf(mre)] # we ignore infs (if real value ~= 0, the relative error can explode)
-            mre = np.mean(mre)
+            y_trues_var = y_trues[variable]
+            y_preds_var = y_preds[variable]
 
-            scores[imputation_method] = {variable: (mae, mre)}
+            mae_ = mae(y_trues_var, y_preds_var)
+            mre_ = mre(y_trues_var, y_preds_var)
+            rmse_ = rmse(y_trues_var, y_preds_var)
+            pearson_corr_ = pearson_corr(y_trues_var, y_preds_var)
+            spearman_corr_ = spearman_corr(y_trues_var, y_preds_var)
+
+            scores[imputation_method][variable] = (mae_, mre_, rmse_, pearson_corr_, spearman_corr_)
 
     return scores
 

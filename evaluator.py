@@ -368,7 +368,7 @@ def scores_tables():
     with warnings.catch_warnings():
         warnings.filterwarnings('ignore')
 
-        score_path = './Scores'
+        score_path = './Scores/relevant'
 
         for path in os.listdir(score_path):
             # separate tables for phF/MF
@@ -494,7 +494,7 @@ def p_value_tables(model_names_first=None, model_names_second=None):
     with warnings.catch_warnings():
         warnings.filterwarnings('ignore')
 
-        score_path = './Scores'
+        score_path = './Scores/relevant'
 
         for path in os.listdir(score_path):
 
@@ -648,12 +648,179 @@ def p_value_tables(model_names_first=None, model_names_second=None):
         print(entry.replace('BOLD\\', r'\textbf').replace('\}', '}'))
 
 
+def p_value_tables_stars(model_names_first=None, model_names_second=None):
+    """
+    Calculates statistical performance significance compared to baselines
+    :param model_names_first: list of models names to use for comparison (incl. '.txt')
+    :param model_names_second: list of models names to use for comparison (incl. '.txt')
+    :return:
+    """
+
+    def starify(p):
+        if p > 0.05:
+            return ''
+        if p > 0.01:
+            return '*'
+        if p > 0.001:
+            return '**'
+        return '***'
+
+    phF = []
+    MF = []
+
+    # not very pretty but works
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore')
+
+        score_path = './Scores/relevant'
+
+        for path in os.listdir(score_path):
+
+            # store scores for each model
+            models = {}
+            for model in os.listdir(score_path + '/' + path):
+                full_path = score_path + '/' + path + '/' + model
+
+                # load scores for model
+                with open(full_path) as f:
+                    scores = f.read()
+                scores = json.loads(scores.replace('\'', '\"'))
+
+                # phF/MF
+                for variable in (0, 1):
+                    # aggregate all metrics of different folds for specific model
+                    aggregation = {'accuracy': [],
+                                   'balanced_accuracy': [],
+                                   'f1': [],
+                                   'recall': [],
+                                   'precision': []}
+                    for fold in scores[variable]:
+                        for metric in aggregation.keys():
+                            aggregation[metric].append(fold[metric])
+
+                    # store scores in models
+                    if variable == 0:
+                        models[model] = {variable: aggregation}
+                    else:
+                        models[model][variable] = aggregation
+
+            # build tables
+            caption_phF = {'loso': 'LOSO - p-values (Physical fatigue)',
+                           'strat_5_fold': 'Stratified 5-fold - p-values (Physical fatigue)',
+                           'strat_group_5_fold': 'Stratified group 5-fold - p-values (Physical fatigue)'}[path]
+            caption_MF = {'loso': 'LOSO - p-values (Mental fatigue)',
+                          'strat_5_fold': 'Stratified 5-fold - p-values (Mental fatigue)',
+                          'strat_group_5_fold': 'Stratified group 5-fold - p-values (Mental fatigue)'}[path]
+            # phF
+            models_name = [model for model in os.listdir(score_path + '/' + path)]
+            baselines_name = ['majority_voting.txt', 'random_guess.txt']
+            non_baselines_name = [model_name for model_name in models_name if
+                                  model_name not in baselines_name]
+            if model_names_first is not None:
+                non_baselines_name = [model_name for model_name in model_names_first]
+            if model_names_second is not None:
+                baselines_name = [model_name for model_name in model_names_second]
+            n_models = len(non_baselines_name) * len(baselines_name)
+            df = pd.DataFrame({'accuracy': [pd.NA]*n_models,
+                               'balanced_accuracy': [pd.NA]*n_models,
+                               'f1': [pd.NA]*n_models,
+                               'recall': [pd.NA]*n_models,
+                               'precision': [pd.NA]*n_models})
+            df = df.set_index(pd.Series([non_baseline.replace('.txt', '') +
+                                         '/' + baseline.replace('.txt', '')
+                                         for non_baseline in non_baselines_name
+                                         for baseline in baselines_name]))
+            # calculate p-value
+            for metric in list(aggregation.keys()):
+                i = 0
+                for non_baseline in non_baselines_name:
+                    for baseline in baselines_name:
+                        baseline_scores = models[baseline][0][metric]
+                        model_scores = models[non_baseline][0][metric]
+                        _, p_value = ttest_ind(baseline_scores, model_scores, equal_var=False)
+                        df[metric].iloc[i] = starify(p_value)
+                        i += 1
+
+            # prettier names
+            df = df.rename(columns={"accuracy": "Accuracy", "balanced_accuracy": "Balanced accuracy",
+                                    "f1": "F1-score", "recall": "Recall", "precision": 'Precision'})
+            df = df.set_index(
+                pd.Series(
+                    [str(n).capitalize().replace('Cnn', 'CNN').replace('Xgboost', 'XGBoost').
+                         replace('_', ' ').replace('.txt', '').replace('forest', 'Forest').
+                         replace('guess', 'Guess').replace('majority', 'Majority').replace('random', 'Random').
+                         replace('voting', 'Voting')
+                     for n in list(df.index)]
+                )
+            )
+            # to latex
+            phF.append(df.to_latex(index=True,
+                                   bold_rows=True,
+                                   caption=caption_phF,
+                                   column_format='llllll',
+                                   position='H'))
+            # MF
+            models_name = [model for model in os.listdir(score_path + '/' + path)]
+            baselines_name = ['majority_voting.txt', 'random_guess.txt']
+            non_baselines_name = [model_name for model_name in models_name if
+                                  model_name not in baselines_name]
+            if model_names_first is not None:
+                non_baselines_name = [model_name for model_name in model_names_first]
+            if model_names_second is not None:
+                baselines_name = [model_name for model_name in model_names_second]
+            n_models = len(non_baselines_name) * len(baselines_name)
+            df = pd.DataFrame({'accuracy': [pd.NA]*n_models,
+                               'balanced_accuracy': [pd.NA]*n_models,
+                               'f1': [pd.NA]*n_models,
+                               'recall': [pd.NA]*n_models,
+                               'precision': [pd.NA]*n_models})
+            df = df.set_index(pd.Series([non_baseline.replace('.txt', '') +
+                                         '/' + baseline.replace('.txt', '')
+                                         for non_baseline in non_baselines_name
+                                         for baseline in baselines_name]))
+            # calculate p-value
+            for metric in list(aggregation.keys()):
+                i = 0
+                for non_baseline in non_baselines_name:
+                    for baseline in baselines_name:
+                        baseline_scores = models[baseline][1][metric]
+                        model_scores = models[non_baseline][1][metric]
+                        _, p_value = ttest_ind(baseline_scores, model_scores, equal_var=False)
+                        df[metric].iloc[i] = starify(p_value)
+                        i += 1
+
+            # prettier names
+            df = df.rename(columns={"accuracy": "Accuracy", "balanced_accuracy": "Balanced accuracy",
+                                    "f1": "F1-score", "recall": "Recall", "precision": 'Precision'})
+            df = df.set_index(
+                pd.Series(
+                    [str(n).capitalize().replace('Cnn', 'CNN').replace('Xgboost', 'XGBoost').
+                         replace('_', ' ').replace('.txt', '').replace('forest', 'Forest').
+                         replace('guess', 'Guess').replace('majority', 'Majority').replace('random', 'Random').
+                         replace('voting', 'Voting')
+                     for n in list(df.index)]
+                )
+            )
+            # to latex
+            MF.append(df.to_latex(index=True,
+                                  bold_rows=True,
+                                  caption=caption_MF,
+                                  column_format='llllll',
+                                  position='H'))
+    # print
+    for entry in phF:
+        print(entry.replace('BOLD\\', r'\textbf').replace('\}', '}'))
+    for entry in MF:
+        print(entry.replace('BOLD\\', r'\textbf').replace('\}', '}'))
+
+
 if __name__ == '__main__':
-    scores_tables()
-    print(r'\newpage')
-    p_value_tables()
+    #scores_tables()
+    #print(r'\newpage')
+    #p_value_tables()
+    p_value_tables_stars()
     """print(r'\newpage')
-    p_value_tables(model_names_first=['cnn (transformer imputation).txt'], 
-                   model_names_second=['cnn (transformer imputation).txt'])"""
+    p_value_tables(model_names_first=['cnn.txt'], 
+                   model_names_second=['cnn (transformer imp.).txt'])"""
 
 #%%
